@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#100b20">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <title>PERSONAL FINANCE</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+
+  <div class="app-shell">
+    <aside class="sidebar glass">
+      <a class="brand" href="#" aria-label="Personal Finance beranda">
+        <span class="brand-mark">PF</span>
+        <span><strong>PERSONAL</strong><small>FINANCE</small></span>
+      </a>
+      <div class="side-label">MENU UTAMA</div>
+      <nav class="side-nav" aria-label="Navigasi utama">
+        <button class="nav-link active" data-page="dashboard"><span class="nav-icon">⌂</span>Dashboard</button>
+        <button class="nav-link" data-page="transactions"><span class="nav-icon">＋</span>Transaksi</button>
+        <button class="nav-link" data-page="history"><span class="nav-icon">◷</span>Riwayat</button>
+        <button class="nav-link" data-page="statistics"><span class="nav-icon">▥</span>Statistik</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="side-label">PREFERENSI</div>
+        <button class="nav-link" data-page="settings"><span class="nav-icon">⚙</span>Pengaturan</button>
+        <div class="sidebar-note">
+          <span class="note-dot"></span>
+          <div><strong>Data tersimpan lokal</strong><small>Hanya di perangkat ini</small></div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow" id="todayLabel">KEUANGAN PRIBADI</p>
+          <h1 id="pageTitle">Dashboard</h1>
+        </div>
+        <div class="top-actions">
+          <span class="local-chip"><span class="note-dot"></span> Lokal</span>
+          <button class="avatar" id="profileButton" title="Profil">PF</button>
+        </div>
+      </header>
+
+      <section class="page active" id="page-dashboard">
+        <div class="welcome-row">
+          <div><p class="muted">Ringkasan keuanganmu</p><h2>Kelola uang, <span class="gradient-text">lebih terarah.</span></h2></div>
+          <button class="button primary" data-go="transactions">＋ Tambah transaksi</button>
+        </div>
+        <div class="summary-grid">
+          <article class="balance-card glass">
+            <div class="card-top"><span>Total saldo</span><span class="card-symbol">◈</span></div>
+            <p class="balance-value" id="totalBalance">Rp0</p>
+            <div class="balance-footer"><span class="status-pill">● Ringkasan saat ini</span><span class="muted small">Pendapatan − Pengeluaran</span></div>
+            <div class="balance-orb"></div>
+          </article>
+          <article class="metric-card glass">
+            <div class="metric-head"><span>Total pemasukan</span><span class="metric-icon income-icon">↗</span></div>
+            <strong id="totalIncome">Rp0</strong><small class="positive">Uang masuk</small>
+          </article>
+          <article class="metric-card glass">
+            <div class="metric-head"><span>Total pengeluaran</span><span class="metric-icon expense-icon">↘</span></div>
+            <strong id="totalExpense">Rp0</strong><small class="negative">Uang keluar</small>
+          </article>
+        </div>
+
+        <div class="content-grid">
+          <article class="panel glass">
+            <div class="panel-heading"><div><p class="eyebrow">ANALISIS</p><h3>Arus kas 6 bulan</h3></div><span class="subtle-tag">Bulanan</span></div>
+            <div class="chart-legend"><span><i class="legend-dot income-dot"></i>Pemasukan</span><span><i class="legend-dot expense-dot"></i>Pengeluaran</span></div>
+            <div class="chart-wrap"><canvas id="cashflowChart" height="220" aria-label="Grafik arus kas enam bulan"></canvas></div>
+          </article>
+          <article class="panel glass category-panel">
+            <div class="panel-heading"><div><p class="eyebrow">PENGELUARAN</p><h3>Kategori terbesar</h3></div></div>
+            <div id="categorySummary" class="category-summary"><div class="empty-state">Belum ada data pengeluaran.</div></div>
+          </article>
+        </div>
+
+        <article class="panel glass recent-panel">
+          <div class="panel-heading"><div><p class="eyebrow">AKTIVITAS TERBARU</p><h3>Transaksi terakhir</h3></div><button class="text-button" data-go="history">Lihat semua →</button></div>
+          <div id="recentTransactions" class="transaction-list"></div>
+        </article>
+      </section>
+
+      <section class="page" id="page-transactions">
+        <div class="page-intro"><p class="muted">Catat setiap uang yang masuk dan keluar.</p><h2>Tambah transaksi</h2></div>
+        <div class="form-layout">
+          <form id="transactionForm" class="panel glass transaction-form">
+            <input type="hidden" id="transactionId">
+            <div class="form-section-title">Informasi transaksi</div>
+            <label class="field-label">Jenis transaksi</label>
+            <div class="type-switch">
+              <button type="button" class="type-option selected income-choice" data-type="income">↗ Pemasukan</button>
+              <button type="button" class="type-option expense-choice" data-type="expense">↘ Pengeluaran</button>
+            </div>
+            <input type="hidden" id="transactionType" value="income">
+            <label class="field-label" for="amount">Nominal (Rupiah)</label>
+            <div class="amount-input"><span>Rp</span><input id="amount" type="number" min="1" step="1" placeholder="Contoh: 50000" required></div>
+            <div class="two-fields">
+              <div><label class="field-label" for="category">Kategori</label><select id="category" required></select></div>
+              <div><label class="field-label" for="date">Tanggal</label><input id="date" type="date" required></div>
+            </div>
+            <label class="field-label" for="description">Catatan</label>
+            <input id="description" type="text" maxlength="70" placeholder="Contoh: Uang saku, makan siang...">
+            <div class="form-actions"><button class="button primary" id="saveTransaction" type="submit">Simpan transaksi</button><button class="button secondary hidden" id="cancelEdit" type="button">Batal edit</button></div>
+            <p class="form-hint">Data disimpan di penyimpanan browser pada perangkat ini.</p>
+          </form>
+          <aside class="panel glass form-tip">
+            <div class="tip-icon">✦</div><h3>Catatan keuangan kecil, dampak besar.</h3>
+            <p class="muted">Biasakan mencatat transaksi segera setelah terjadi agar ringkasan keuangan tetap akurat.</p>
+            <div class="tip-divider"></div>
+            <div class="tip-row"><span class="tip-dot green"></span><span>Pemasukan menambah saldo.</span></div>
+            <div class="tip-row"><span class="tip-dot pink"></span><span>Pengeluaran mengurangi saldo.</span></div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="page" id="page-history">
+        <div class="page-intro"><p class="muted">Periksa dan kelola semua catatanmu.</p><h2>Riwayat transaksi</h2></div>
+        <article class="panel glass">
+          <div class="filter-row">
+            <input id="searchTransactions" type="search" placeholder="⌕ Cari catatan atau kategori...">
+            <select id="filterType"><option value="all">Semua jenis</option><option value="income">Pemasukan</option><option value="expense">Pengeluaran</option></select>
+            <select id="filterMonth"><option value="all">Semua bulan</option></select>
+          </div>
+          <div class="history-total" id="historyCount">0 transaksi</div>
+          <div id="historyTransactions" class="transaction-list"></div>
+        </article>
+      </section>
+
+      <section class="page" id="page-statistics">
+        <div class="page-intro"><p class="muted">Pahami pola keuanganmu dari waktu ke waktu.</p><h2>Statistik keuangan</h2></div>
+        <div class="summary-grid stats-summary">
+          <article class="metric-card glass"><div class="metric-head"><span>Pemasukan bulan ini</span><span class="metric-icon income-icon">↗</span></div><strong id="monthIncome">Rp0</strong><small class="positive">Bulan berjalan</small></article>
+          <article class="metric-card glass"><div class="metric-head"><span>Pengeluaran bulan ini</span><span class="metric-icon expense-icon">↘</span></div><strong id="monthExpense">Rp0</strong><small class="negative">Bulan berjalan</small></article>
+          <article class="metric-card glass"><div class="metric-head"><span>Selisih bulan ini</span><span class="metric-icon">◇</span></div><strong id="monthNet">Rp0</strong><small class="muted">Pemasukan − pengeluaran</small></article>
+        </div>
+        <div class="content-grid">
+          <article class="panel glass"><div class="panel-heading"><div><p class="eyebrow">PERBANDINGAN</p><h3>Pemasukan vs pengeluaran</h3></div></div><div class="chart-wrap"><canvas id="statsChart" height="250"></canvas></div></article>
+          <article class="panel glass"><div class="panel-heading"><div><p class="eyebrow">RINCIAN</p><h3>Pengeluaran per kategori</h3></div></div><div id="statsCategories" class="category-summary"></div></article>
+        </div>
+      </section>
+
+      <section class="page" id="page-settings">
+        <div class="page-intro"><p class="muted">Atur preferensi aplikasi dan datamu.</p><h2>Pengaturan</h2></div>
+        <div class="settings-grid">
+          <article class="panel glass settings-card"><div class="settings-icon">◉</div><div><h3>PERSONAL FINANCE</h3><p class="muted">Pencatatan keuangan pribadi · IDR</p></div><span class="subtle-tag">v1.0</span></article>
+          <article class="panel glass settings-card"><div class="settings-icon">▣</div><div class="settings-copy"><h3>Data lokal</h3><p class="muted">Transaksi tersimpan pada browser di perangkat ini. Menghapus data browser dapat menghilangkannya.</p></div><button class="button secondary" id="exportCsv">Ekspor CSV</button></article>
+          <article class="panel glass settings-card danger-setting"><div class="settings-icon">⌫</div><div class="settings-copy"><h3>Hapus semua data</h3><p class="muted">Menghapus seluruh transaksi yang tersimpan. Tindakan ini tidak dapat dibatalkan.</p></div><button class="button danger" id="clearData">Hapus data</button></article>
+          <p class="settings-footnote">Privasi: aplikasi ini tidak mengirim data transaksi ke server. Simpan salinan CSV secara berkala sebagai cadangan.</p>
+        </div>
+      </section>
+
+      <footer class="app-footer">PERSONAL FINANCE <span>•</span> Dibuat untuk mengelola keuangan dengan lebih sadar.</footer>
+    </main>
+  </div>
+
+  <nav class="mobile-nav glass" aria-label="Navigasi mobile">
+    <button class="nav-link active" data-page="dashboard"><span>⌂</span><small>Home</small></button>
+    <button class="nav-link" data-page="transactions"><span>＋</span><small>Catat</small></button>
+    <button class="nav-link" data-page="history"><span>◷</span><small>Riwayat</small></button>
+    <button class="nav-link" data-page="statistics"><span>▥</span><small>Statistik</small></button>
+    <button class="nav-link" data-page="settings"><span>⚙</span><small>Setting</small></button>
+  </nav>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="js/storage.js"></script>
+  <script src="js/transactions.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/statistics.js"></script>
+  <script src="js/navigation.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./service-worker.js").catch(err => console.warn("Service worker gagal didaftarkan:", err));
+      });
+    }
+  </script>
+</body>
+</html>
